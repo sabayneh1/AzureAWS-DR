@@ -43,6 +43,3 @@ resource "azurerm_lb_rule" "main" {
   probe_id                       = azurerm_lb_probe.main.id
 }
 
-output "lb_backend_id" {
-  value = azurerm_lb_backend_address_pool.bpe.id
-}
