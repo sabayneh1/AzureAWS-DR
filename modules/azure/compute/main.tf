@@ -45,7 +45,3 @@ resource "azurerm_virtual_machine" "main" {
     environment = "testing"
   }
 }
-
-output "compute_id" {
-  value = azurerm_virtual_machine.main.id
-}
