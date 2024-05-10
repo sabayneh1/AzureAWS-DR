@@ -54,6 +54,3 @@ resource "azurerm_monitor_autoscale_setting" "example" {
   }
 }
 
-output "autoscale_setting_id" {
-  value = azurerm_monitor_autoscale_setting.example.id
-}
