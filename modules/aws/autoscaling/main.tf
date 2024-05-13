@@ -23,7 +23,7 @@ resource "aws_launch_configuration" "my_launch_configuration" {
   key_name      = "ubuntu"
   security_groups = [var.security_group]
 
-  user_data = filebase64("${path.module}/server.sh")
+
 
   lifecycle {
     create_before_destroy = true
@@ -48,14 +48,3 @@ resource "aws_autoscaling_policy" "scale_down" {
   cooldown               = 300
 }
 
-output "asg_name" {
-  value = aws_autoscaling_group.my_asg.name
-}
-
-output "scale_up_policy_arn" {
-  value = aws_autoscaling_policy.scale_up.arn
-}
-
-output "scale_down_policy_arn" {
-  value = aws_autoscaling_policy.scale_down.arn
-}
