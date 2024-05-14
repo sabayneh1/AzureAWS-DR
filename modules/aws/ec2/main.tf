@@ -4,8 +4,6 @@ resource "aws_launch_template" "my_launch_template" {
   instance_type = "t2.micro"
   key_name      = "ubuntu"
 
-  user_data = filebase64("${path.module}/server.sh")
-
   block_device_mappings {
     device_name = "/dev/sda1"
 
@@ -21,6 +19,3 @@ resource "aws_launch_template" "my_launch_template" {
   }
 }
 
-output "launch_template_id" {
-  value = aws_launch_template.my_launch_template.id
-}
