@@ -12,3 +12,9 @@ variable "subnet_ids" {
   description = "The list of subnet IDs to launch resources in"
   type        = list(string)
 }
+
+variable "launch_template_name" {
+  description = "The name of the launch template"
+  type        = string
+}
+
