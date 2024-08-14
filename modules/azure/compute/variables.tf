@@ -17,3 +17,14 @@ variable "subnet_id" {
   description = "The subnet ID to launch the instance in"
   type        = string
 }
+
+variable "unique_suffix" {
+  description = "A unique suffix to ensure unique resource names"
+  type        = string
+}
+
+variable "vmss_name" {
+  description = "The name of the VM scale set"
+  type        = string
+  default     = "vmss"
+}
