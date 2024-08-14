@@ -8,12 +8,13 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "compute_ids" {
-  description = "The IDs of the compute resources to be scaled"
-  type        = list(string)
-}
-
 variable "lb_backend_id" {
   description = "The ID of the load balancer backend pool"
   type        = string
 }
+
+variable "vmss_id" {
+  description = "The ID of the Virtual Machine Scale Set to be scaled"
+  type        = string
+}
+
