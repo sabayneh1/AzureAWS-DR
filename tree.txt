@@ -22,3 +22,6 @@
 │       │   └── main.tf
 │       ├── scaling/
 │           └── main.tf
+
+
+Get-AzVmssVM -ResourceGroupName "forStringConnection" -VMScaleSetName "myvmss-HZt5Oq" | Select-Object -Property InstanceId, Location, Zone
