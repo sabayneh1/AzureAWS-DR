@@ -12,3 +12,21 @@ variable "scale_down_policy_arn" {
   description = "The ARN of the scale down policy"
   type        = string
 }
+
+
+# ALB Name
+variable "alb_name" {
+  description = "The name of the Application Load Balancer"
+  type        = string
+}
+
+
+variable "lambda_function_arn" {
+  description = "The name of the Application Load Balancer"
+  type        = string
+}
+
+variable "lambda_function_function_name" {
+  description = "The name of the Application Load Balancer"
+  type        = string
+}
