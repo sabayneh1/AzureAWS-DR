@@ -28,3 +28,9 @@ variable "vmss_name" {
   type        = string
   default     = "vmss"
 }
+
+
+variable "nsg_id" {
+  description = "A unique suffix to ensure unique resource names"
+  type        = string
+}
