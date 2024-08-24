@@ -17,3 +17,7 @@ output "public_subnet_b_id" {
 output "public_subnet_c_id" {
   value = azurerm_subnet.public_c.id
 }
+
+output "nsg_id" {
+  value = azurerm_network_security_group.main.id
+}
