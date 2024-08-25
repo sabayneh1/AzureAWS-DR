@@ -1,0 +1,7 @@
+[aws]
+aws_vm15.156.70.220 ansible_host=15.156.70.220 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sam/Multi-CloudDisasterRecovery/multi-Cloud-DR/ubuntu.pem
+aws_vm3.98.123.138 ansible_host=3.98.123.138 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sam/Multi-CloudDisasterRecovery/multi-Cloud-DR/ubuntu.pem
+aws_vm99.79.196.183 ansible_host=99.79.196.183 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sam/Multi-CloudDisasterRecovery/multi-Cloud-DR/ubuntu.pem
+aws_vm15.157.60.58 ansible_host=15.157.60.58 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sam/Multi-CloudDisasterRecovery/multi-Cloud-DR/ubuntu.pem
+
+[azure]
