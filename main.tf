@@ -40,23 +40,23 @@ module "aws_autoscaling" {
 }
 
 
-module "aws_cloudwatch" {
-  source                = "./modules/aws/cloudwatch"
-  asg_name              = module.aws_autoscaling.asg_name
-  scale_up_policy_arn   = module.aws_autoscaling.scale_up_policy_arn
-  scale_down_policy_arn = module.aws_autoscaling.scale_down_policy_arn
-  alb_name              = module.aws_lb.alb_name
-  lambda_function_arn = module.lambda_disaster_recovery.lambda_function_arn
-  lambda_function_function_name = module.lambda_disaster_recovery.lambda_function_function_name
-  depends_on = [ module.aws_vpc, module.aws_autoscaling,module.aws_ec2,module.aws_lb,module.lambda_disaster_recovery ]
+# module "aws_cloudwatch" {
+#   source                = "./modules/aws/cloudwatch"
+#   asg_name              = module.aws_autoscaling.asg_name
+#   scale_up_policy_arn   = module.aws_autoscaling.scale_up_policy_arn
+#   scale_down_policy_arn = module.aws_autoscaling.scale_down_policy_arn
+#   alb_name              = module.aws_lb.alb_name
+#   lambda_function_arn = module.lambda_disaster_recovery.lambda_function_arn
+#   lambda_function_function_name = module.lambda_disaster_recovery.lambda_function_function_name
+#   depends_on = [ module.aws_vpc, module.aws_autoscaling,module.aws_ec2,module.aws_lb,module.lambda_disaster_recovery ]
 
-}
+# }
 
-module "lambda_disaster_recovery" {
-  source      = "./modules/aws/lambda_disaster_recovery"
-  github_repo = "https://github.com/sabayneh1/AzureAWS-DR.git"
-  depends_on = [ module.aws_vpc, module.aws_autoscaling,module.aws_ec2,module.aws_lb]
-}
+# module "lambda_disaster_recovery" {
+#   source      = "./modules/aws/lambda_disaster_recovery"
+#   github_repo = "https://github.com/sabayneh1/AzureAWS-DR.git"
+#   depends_on = [ module.aws_vpc, module.aws_autoscaling,module.aws_ec2,module.aws_lb]
+# }
 
 
 
