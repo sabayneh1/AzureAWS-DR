@@ -1,0 +1,113 @@
+Access the MySQL Command Line:
+
+SSH into your VM and run the following command to access the MySQL command line:
+bash
+Copy code
+mysql -u root -p
+Enter the root password (your_root_password).
+Select the Database:
+
+Once in the MySQL command line, select the sampledb database:
+sql
+Copy code
+USE sampledb;
+Verify the Users Table:
+
+Check the contents of the users table:
+sql
+Copy code
+SELECT * FROM users;
+Verify the Inserted Data:
+
+The output should list all the users (samander, johndoe, janedoe) with their respective IDs and usernames.
+
+
+
+deployment
+# Initialize Terraform
+terraform init
+
+# Select or create a workspace for AWS
+terraform workspace new aws
+
+# Apply only AWS infrastructure
+terraform apply -target=module.aws_vpc -target=module.aws_lb -target=module.aws_ec2 -target=module.aws_autoscaling
+
+# Later, select or create a workspace for Azure
+terraform workspace new azure
+
+# Apply only Azure infrastructure
+terraform apply -target=module.azure_vnet -target=module.azure_compute_vmss -target=module.azure_lb -target=module.azure_autoscaling
+
+
+
+main
+terraform apply \
+  -target=module.aws_vpc \
+  -target=module.aws_lb \
+  -target=module.aws_ec2 \
+  -target=module.aws_autoscaling \
+  -target=module.lambda_disaster_recovery \
+  -target=module.aws_cloudwatch \
+  -target=local_file.ansible_inventory \
+  -target=null_resource.run_ansible
+
+
+ansible
+
+#ansible-playbook -i inventory site.yml
+
+#ansible-playbook -i inventory site.yml --tags "aws"
+#ansible-playbook -i inventory site.yml --tags "azure"
+; ansible-playbook -i inventory site.yml --limit azure
+
+
+; ansible-vault encrypt_string 'P@ssword1234!' --name 'ansible_password'
+
+
+; export ANSIBLE_HOST_KEY_CHECKING=False
+; ansible-playbook -i inventory site.yml --limit azure
+
+
+azure
+[azure]
+azure_vm1 ansible_host=4.206.220.235 ansible_user=adminuser ansible_password='P@ssword1234!'
+azure_vm2 ansible_host=20.151.59.126 ansible_user=adminuser ansible_password='P@ssword1234!'
+
+
+
+python
+
+# Use this code snippet in your app.
+# If you need more information about configurations
+# or implementing the sample code, visit the AWS docs:
+# https://aws.amazon.com/developer/language/python/
+
+import boto3
+from botocore.exceptions import ClientError
+
+
+def get_secret():
+
+    secret_name = "my_azure_credentials"
+    region_name = "ca-central-1"
+
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        # For a list of exceptions thrown, see
+        # https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        raise e
+
+    secret = get_secret_value_response['SecretString']
+
+    # Your code goes here.
