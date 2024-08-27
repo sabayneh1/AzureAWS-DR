@@ -1,0 +1,156 @@
+- name: Setup web server and database
+  hosts: all
+  become: yes
+  vars:
+    db_name: sampledb
+    db_user: dbuser
+    db_password: dbpassword
+    root_db_password: "your_root_password"
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Python MySQL dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - "{{ 'python-mysqldb' if ansible_python.version.major == 2 else 'python3-pymysql' }}"
+        - "{{ 'python3-mysqldb' if ansible_python.version.major == 3 else '' }}"
+      when: ansible_python.version.major in [2, 3]
+
+    - name: Install necessary packages
+      apt:
+        name:
+          - apache2
+          - mysql-server
+          - php
+          - libapache2-mod-php
+          - php-mysql
+        state: present
+
+    - name: Start and enable Apache service
+      service:
+        name: apache2
+        state: started
+        enabled: yes
+
+    - name: Start and enable MySQL service
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+
+    - name: Disable auth_socket plugin and set root password
+      shell: |
+        mysql -u root <<EOF
+        ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '{{ root_db_password }}';
+        FLUSH PRIVILEGES;
+        EOF
+      args:
+        executable: /bin/bash
+      ignore_errors: yes
+
+    - name: Ensure MySQL root user has correct privileges
+      mysql_user:
+        name: root
+        host: localhost
+        password: "{{ root_db_password }}"
+        priv: '*.*:ALL,GRANT'
+        state: present
+        login_user: root
+        login_password: "{{ root_db_password }}"
+        login_host: localhost
+      ignore_errors: yes
+
+    - name: Create MySQL database
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present
+        login_user: root
+        login_password: "{{ root_db_password }}"
+        login_host: localhost
+
+    - name: Create MySQL user
+      mysql_user:
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        priv: "{{ db_name }}.*:ALL"
+        state: present
+        login_user: root
+        login_password: "{{ root_db_password }}"
+        login_host: localhost
+
+    - name: Replace default Apache index page with custom PHP page
+      copy:
+        content: |
+          <?php
+          echo "<h1>This is Samander's test webpage for the project</h1>";
+
+          $conn = new mysqli("localhost", "{{ db_user }}", "{{ db_password }}", "{{ db_name }}");
+          if ($conn->connect_error) {
+              die("Connection failed: " . $conn->connect_error);
+          }
+          echo "Connected successfully to the database!";
+
+          $sql = "CREATE TABLE IF NOT EXISTS users (
+                      id INT AUTO_INCREMENT PRIMARY KEY,
+                      username VARCHAR(50) NOT NULL UNIQUE,
+                      password VARCHAR(255) NOT NULL
+                  )";
+          if ($conn->query($sql) === TRUE) {
+              echo "<p>Table 'users' created successfully.</p>";
+          } else {
+              echo "<p>Error creating table: " . $conn->error . "</p>";
+          }
+
+          // Insert sample users only if they do not exist
+          $users = [
+              ['samander', 'password123'],
+              ['johndoe', 'password456'],
+              ['janedoe', 'password789']
+          ];
+
+          foreach ($users as $user) {
+              $username = $user[0];
+              $password = $user[1];
+              $sql = "INSERT INTO users (username, password) SELECT '$username', '$password' WHERE NOT EXISTS (SELECT 1 FROM users WHERE username = '$username')";
+              if ($conn->query($sql) === TRUE) {
+                  echo "<p>User '$username' added successfully.</p>";
+              } else {
+                  echo "<p>Error adding user '$username': " . $conn->error . "</p>";
+              }
+          }
+
+          // List users in the database
+          $sql = "SELECT id, username FROM users";
+          $result = $conn->query($sql);
+
+          if ($result->num_rows > 0) {
+              echo "<h2>Users in the database:</h2><ul>";
+              while($row = $result->fetch_assoc()) {
+                  echo "<li>ID: " . $row["id"]. " - Username: " . $row["username"]. "</li>";
+              }
+              echo "</ul>";
+          } else {
+              echo "<p>No users found.</p>";
+          }
+
+          $conn->close();
+          ?>
+        dest: /var/www/html/index.php
+        owner: www-data
+        group: www-data
+        mode: '0644'
+
+
+    - name: Remove the default Apache index.html file
+      file:
+        path: /var/www/html/index.html
+        state: absent
+
+    - name: Restart Apache to apply changes
+      service:
+        name: apache2
+        state: restarted
