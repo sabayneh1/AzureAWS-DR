@@ -1,31 +1,9 @@
-resource "aws_iam_role" "lambda_exec" {
-  name = "lambda_execution_role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      },
-    ]
-  })
-}
-
-resource "aws_iam_role_policy_attachment" "lambda_policy" {
-  role       = aws_iam_role.lambda_exec.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSLambdaBasicExecutionRole"
-}
-
 resource "aws_lambda_function" "trigger_disaster_recovery" {
   function_name = "trigger_disaster_recovery"
-  handler       = "index.lambda_handler"
+  handler       = "lambda_function.lambda_handler"
   runtime       = "python3.8"
   role          = aws_iam_role.lambda_exec.arn
-  filename      = "function.zip" # Replace with your actual deployment package
+  filename      = "${path.module}/function.zip"  # Adjust the path if needed
 
   environment {
     variables = {
@@ -79,4 +57,10 @@ resource "aws_iam_role_policy" "lambda_policy" {
       }
     ]
   })
+}
+
+
+resource "aws_iam_role_policy_attachment" "lambda_policy" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }

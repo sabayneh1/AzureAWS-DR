@@ -9,7 +9,6 @@ def get_secret():
     secret_name = "my_azure_credentials"
     region_name = "ca-central-1"
 
-    # Create a Secrets Manager client
     session = boto3.session.Session()
     client = session.client(
         service_name='secretsmanager',
@@ -66,12 +65,17 @@ def run_ansible(azure_ips):
     with open("/tmp/azure_inventory", "w") as inventory_file:
         inventory_file.write(inventory_content)
 
+    # Set the environment variable for Ansible
+    ansible_env = os.environ.copy()
+    ansible_env['ANSIBLE_HOST_KEY_CHECKING'] = 'False'
+
     ansible_command = [
         "ansible-playbook",
         "-i", "/tmp/azure_inventory",
         "/home/sam/Multi-CloudDisasterRecovery/multi-Cloud-DR/ansible/site.yml"
     ]
-    subprocess.run(ansible_command)
+    subprocess.run(ansible_command, env=ansible_env)
+
 
 def lambda_handler(event, context):
     credentials = get_secret()
@@ -94,7 +98,7 @@ def lambda_handler(event, context):
         subprocess.run(["git", "clone", "https://github.com/sabayneh1/AzureAWS-DR.git", "/tmp/AzureAWS-DR"])
 
         # Change directory to the Terraform folder for Azure
-        os.chdir("/tmp/AzureAWS-DR")
+        os.chdir("/tmp/AzureAWS-DR/azure")
 
         # Apply the Terraform configuration for Azure
         subprocess.run([
@@ -112,9 +116,7 @@ def lambda_handler(event, context):
         # Run Ansible for Azure VMs
         run_ansible(azure_ips)
 
-        # Optionally, check the health of the Azure LB as well
-        # azure_lb_dns_name = "your-azure-lb-dns-name"
-        if not check_elb_health(azure_lb_dns_name):
+        if not check_elb_health("your-azure-lb-dns-name"):
             print("Azure LB health check failed after deployment.")
         else:
             print("Azure LB is healthy after deployment.")

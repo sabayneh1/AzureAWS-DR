@@ -1,0 +1,5 @@
+[aws]
+aws_vm35.183.72.84 ansible_host=35.183.72.84 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sam/Multi-CloudDisasterRecovery/multi-Cloud-DR/AWS/ubuntu.pem
+aws_vm3.99.136.2 ansible_host=3.99.136.2 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sam/Multi-CloudDisasterRecovery/multi-Cloud-DR/AWS/ubuntu.pem
+aws_vm15.156.203.126 ansible_host=15.156.203.126 ansible_user=ubuntu ansible_ssh_private_key_file=/home/sam/Multi-CloudDisasterRecovery/multi-Cloud-DR/AWS/ubuntu.pem
+
