@@ -34,3 +34,9 @@ variable "nsg_id" {
   description = "A unique suffix to ensure unique resource names"
   type        = string
 }
+
+
+variable "lb_backend_id" {
+  description = "A unique suffix to ensure unique resource names"
+  type        = string
+}

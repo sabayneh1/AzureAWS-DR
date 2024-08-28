@@ -25,6 +25,7 @@ module "azure_compute_vmss" {
   unique_suffix       = random_string.suffix.result
   vmss_name           = "myvmss"
   nsg_id              = module.azure_vnet.nsg_id
+  lb_backend_id       = module.azure_lb.lb_backend_id
   depends_on          = [module.azure_vnet]
 }
 
